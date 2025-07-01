@@ -2,7 +2,7 @@ import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from textblob import TextBlob
 
-# Download required NLTK data
+
 try:
     nltk.data.find('sentiment/vader_lexicon')
 except LookupError:
