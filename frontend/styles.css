@@ -1,0 +1,271 @@
+:root {
+    --primary-blue: #B2EBF2;
+    --light-blue: #E0F7FA;
+    --lavender: #9C27B0;
+    --light-lavender: #7B1FA2;
+    --cream: #FFF8E1;
+    --teal: #80DEEA;
+    --dark-text: #546E7A;
+    --positive-green: #69F0AE;
+  }
+
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, #E0F7FA 0%, #9C27B0 100%);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, button {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .gradient-header {
+    background: linear-gradient(135deg, var(--light-blue), var(--lavender));
+  }
+
+  .frosted-glass {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .user-message {
+    background-color: var(--teal);
+    color: white;
+    align-self: flex-end;
+    border-radius: 18px 18px 4px 18px;
+  }
+
+  .bot-message {
+    background-color: white;
+    color: var(--dark-text);
+    align-self: flex-start;
+    border-radius: 18px 18px 18px 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .send-button {
+    background: linear-gradient(135deg, var(--teal), var(--primary-blue));
+    transition: transform 0.2s ease;
+  }
+
+  .send-button:hover {
+    transform: scale(1.05);
+  }
+
+  .phq-button {
+    background-color: var(--light-lavender);
+    transition: transform 0.2s ease;
+  }
+
+  .phq-button:hover {
+    transform: translateY(-2px);
+  }
+
+  .input-field {
+    transition: box-shadow 0.3s ease;
+  }
+
+  .input-field:focus {
+    box-shadow: 0 0 8px rgba(128, 222, 234, 0.5);
+    outline: none;
+  }
+
+  /* Animations */
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
+
+  .floating {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .pulsing {
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  /* Nature elements */
+  .leaf {
+    position: absolute;
+    opacity: 0.4;
+    z-index: 0;
+  }
+
+  /* Custom radio buttons */
+  .custom-radio {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .custom-radio input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .checkmark {
+    position: relative;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    background-color: white;
+    border: 2px solid var(--primary-blue);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .custom-radio:hover .checkmark {
+    box-shadow: 0 0 5px rgba(178, 235, 242, 0.5);
+  }
+
+  .custom-radio input:checked ~ .checkmark {
+    background-color: white;
+    border-color: var(--teal);
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    top: 3px;
+    left: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--teal);
+    transition: all 0.2s ease;
+  }
+
+  .custom-radio input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  /* Loading animation */
+  .lotus-loader {
+    width: 60px;
+    height: 60px;
+    position: relative;
+  }
+
+  .lotus-petal {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--lavender);
+    border-radius: 50% 50% 0 50%;
+    transform-origin: bottom right;
+    opacity: 0.8;
+  }
+
+  /* Chat bubble animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.3s ease forwards;
+  }
+
+  /* Typing indicator */
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: white;
+    border-radius: 18px;
+    width: fit-content;
+  }
+
+  .typing-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typingAnimation 1.5s infinite ease-in-out;
+  }
+
+  .typing-dot:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+  .typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes typingAnimation {
+    0% { transform: translateY(0); background-color: #ccc; }
+    50% { transform: translateY(-5px); background-color: var(--teal); }
+    100% { transform: translateY(0); background-color: #ccc; }
+  }
+
+  /* PHQ-9 progress indicator */
+  .phq-progress {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .phq-step {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #546E7A;
+    position: relative;
+  }
+
+  .phq-step.active {
+    background-color: white;
+    color: var(--teal);
+  }
+
+  .phq-step.completed {
+    background-color: var(--teal);
+    color: white;
+  }
+
+  .phq-step::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.5);
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+  }
+
+  .phq-step:last-child::after {
+    display: none;
+  }
+
+  /* Results visualization */
+  .result-bar {
+    height: 20px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--teal));
+    border-radius: 10px;
+    transition: width 1s ease;
+  }

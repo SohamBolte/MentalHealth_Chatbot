@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SereneMind - Your Mental Wellness Companion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style src = "static/styles.css"></style>
+  <style>
+    :root {
+      --primary-blue: #B2EBF2;
+      --light-blue: #E0F7FA;
+      --lavender: #9C27B0;
+      --light-lavender: #7B1FA2;
+      --cream: #FFF8E1;
+      --teal: #80DEEA;
+      --dark-text: #546E7A;
+      --positive-green: #69F0AE;
+    }
+
+    body {
+      font-family: 'Nunito Sans', sans-serif;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #E0F7FA 0%, #9C27B0 100%);
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, button {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .gradient-header {
+      background: linear-gradient(135deg, var(--light-blue), var(--lavender));
+    }
+
+    .frosted-glass {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .user-message {
+      background-color: var(--teal);
+      color: white;
+      align-self: flex-end;
+      border-radius: 18px 18px 4px 18px;
+    }
+
+    .bot-message {
+      background-color: white;
+      color: var(--dark-text);
+      align-self: flex-start;
+      border-radius: 18px 18px 18px 4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .send-button {
+      background: linear-gradient(135deg, var(--teal), var(--primary-blue));
+      transition: transform 0.2s ease;
+    }
+
+    .send-button:hover {
+      transform: scale(1.05);
+    }
+
+    .phq-button {
+      background-color: var(--light-lavender);
+      transition: transform 0.2s ease;
+    }
+
+    .phq-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .input-field {
+      transition: box-shadow 0.3s ease;
+    }
+
+    .input-field:focus {
+      box-shadow: 0 0 8px rgba(128, 222, 234, 0.5);
+      outline: none;
+    }
+
+    /* Animations */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .pulsing {
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    /* Nature elements */
+    .leaf {
+      position: absolute;
+      opacity: 0.4;
+      z-index: 0;
+    }
+
+    /* Custom radio buttons */
+    .custom-radio {
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .custom-radio input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .checkmark {
+      position: relative;
+      display: inline-block;
+      height: 20px;
+      width: 20px;
+      background-color: white;
+      border: 2px solid var(--primary-blue);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .custom-radio:hover .checkmark {
+      box-shadow: 0 0 5px rgba(178, 235, 242, 0.5);
+    }
+
+    .custom-radio input:checked ~ .checkmark {
+      background-color: white;
+      border-color: var(--teal);
+    }
+
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+      top: 3px;
+      left: 3px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--teal);
+      transition: all 0.2s ease;
+    }
+
+    .custom-radio input:checked ~ .checkmark:after {
+      display: block;
+    }
+
+    /* Loading animation */
+    .lotus-loader {
+      width: 60px;
+      height: 60px;
+      position: relative;
+    }
+
+    .lotus-petal {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: var(--lavender);
+      border-radius: 50% 50% 0 50%;
+      transform-origin: bottom right;
+      opacity: 0.8;
+    }
+
+    /* Chat bubble animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    /* Typing indicator */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      background-color: white;
+      border-radius: 18px;
+      width: fit-content;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #ccc;
+      border-radius: 50%;
+      margin: 0 2px;
+      animation: typingAnimation 1.5s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typingAnimation {
+      0% { transform: translateY(0); background-color: #ccc; }
+      50% { transform: translateY(-5px); background-color: var(--teal); }
+      100% { transform: translateY(0); background-color: #ccc; }
+    }
+
+    /* PHQ-9 progress indicator */
+    .phq-progress {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .phq-step {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 500;
+      color: #546E7A;
+      position: relative;
+    }
+
+    .phq-step.active {
+      background-color: white;
+      color: var(--teal);
+    }
+
+    .phq-step.completed {
+      background-color: var(--teal);
+      color: white;
+    }
+
+    .phq-step::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background-color: rgba(255, 255, 255, 0.5);
+      top: 50%;
+      left: 100%;
+      transform: translateY(-50%);
+    }
+
+    .phq-step:last-child::after {
+      display: none;
+    }
+
+    /* Results visualization */
+    .result-bar {
+      height: 20px;
+      background: linear-gradient(90deg, var(--primary-blue), var(--teal));
+      border-radius: 10px;
+      transition: width 1s ease;
+    }
+    #chat-modal {
+        z-index: 1000;
+    }
+    /* Add this to your style section */
+    #chat-modal .frosted-glass {
+    width: 90%; /* Increase width to take more space */
+    max-width: 800px; /* Increase max width */
+    height: 85vh; /* Increase height */
+    max-height: 700px; /* Increase max height */
+    }
+
+    /* Adjust the messages container height */
+    #chat-messages-container {
+    height: calc(85vh - 180px) !important; /* Adjust based on new height */
+    max-height: 560px !important; /* Adjust based on new max height */
+    }
+
+    /* Make the input area more spacious */
+    #chat-input {
+    min-height: 50px; /* Make input taller */
+    padding: 12px 16px; /* More padding */
+    }
+    #chat-modal .input-field {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+    }
+    /* Adjust the send button to match taller input */
+    #chat-send-button {
+    height: 50px;
+    width: 50px;
+    }
+
+    /* Make PHQ button more prominent */
+    #chat-phq-button {
+        background: linear-gradient(135deg, var(--light-lavender), var(--lavender));
+        padding: 12px 24px;
+        border-radius: 25px;
+        color: white;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    /*#chat-phq-button {
+    background: linear-gradient(135deg, var(--light-lavender), var(--lavender));
+    padding: 10px 20px;
+    border-radius: 25px;
+    color: white;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    }*/
+
+    #chat-phq-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+
+  </style>
+</head>
+<body>
+  <!-- Background Elements -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <svg class="leaf floating" style="top: 10%; left: 5%; width: 80px;" viewBox="0 0 100 100">
+      <path d="M50,10 C70,25 90,40 50,90 C10,40 30,25 50,10" fill="#B2EBF2" />
+    </svg>
+    <svg class="leaf floating" style="top: 30%; right: 10%; width: 60px; animation-delay: 1s;" viewBox="0 0 100 100">
+      <path d="M50,10 C70,25 90,40 50,90 C10,40 30,25 50,10" fill="#9C27B0" />
+    </svg>
+    <svg class="leaf floating" style="bottom: 20%; left: 15%; width: 70px; animation-delay: 2s;" viewBox="0 0 100 100">
+      <path d="M50,10 C70,25 90,40 50,90 C10,40 30,25 50,10" fill="#FFF8E1" />
+    </svg>
+    <svg class="leaf floating" style="bottom: 40%; right: 20%; width: 50px; animation-delay: 3s;" viewBox="0 0 100 100">
+      <path d="M50,10 C70,25 90,40 50,90 C10,40 30,25 50,10" fill="#B2EBF2" opacity="0.6" />
+    </svg>
+  </div>
+
+  <!-- Header -->
+  <header class="gradient-header p-4 shadow-md relative z-10">
+    <div class="container mx-auto flex items-center justify-between">
+      <div class="flex items-center">
+        <svg class="w-8 h-8 mr-2" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="white" stroke-width="2" />
+          <path d="M50,30 C60,40 70,45 50,70 C30,45 40,40 50,30" fill="white" />
+        </svg>
+        <h1 class="text-xl md:text-2xl font-medium tracking-wide text-white">SereneMind</h1>
+      </div>
+      <nav class="hidden md:flex items-center space-x-6">
+        <button id="chat-nav-button" class="px-4 py-2 bg-white bg-opacity-20 rounded-full text-white hover:bg-opacity-30 transition">Start Chatting</button>
+      </nav>
+      <button class="md:hidden text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center py-20 px-4 z-10">
+    <div class="container mx-auto flex flex-col md:flex-row items-center">
+      <div class="md:w-1/2 mb-10 md:mb-0">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">Find Peace in Your Mental Journey</h1>
+        <p class="text-xl text-white text-opacity-90 mb-8">SereneMind provides a safe, supportive space for you to explore your thoughts, feelings, and mental wellbeing.</p>
+        <button id="hero-chat-button" class="px-8 py-3 bg-white rounded-full text-teal-500 font-medium shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+          Start Your Journey
+        </button>
+      </div>
+      <div class="md:w-1/2 flex justify-center">
+        <div class="relative w-full max-w-md">
+          <svg class="w-full h-auto" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="200" cy="200" r="150" fill="#FFF" fill-opacity="0.2" />
+            <g class="floating" style="animation-duration: 8s;">
+              <ellipse cx="200" cy="250" rx="60" ry="20" fill="#B2EBF2" opacity="0.6" />
+              <path d="M200,150 C230,150 240,190 240,230 C240,250 220,270 200,270 C180,270 160,250 160,230 C160,190 170,150 200,150" fill="#FFF" />
+              <circle cx="200" cy="140" r="30" fill="#FFF" />
+              <path d="M170,180 C160,200 150,220 160,240" fill="none" stroke="#FFF" stroke-width="5" stroke-linecap="round" />
+              <path d="M230,180 C240,200 250,220 240,240" fill="none" stroke="#FFF" stroke-width="5" stroke-linecap="round" />
+              <path d="M180,250 C170,240 160,245 150,255" fill="none" stroke="#FFF" stroke-width="5" stroke-linecap="round" />
+              <path d="M220,250 C230,240 240,245 250,255" fill="none" stroke="#FFF" stroke-width="5" stroke-linecap="round" />
+            </g>
+            <g class="floating" style="animation-delay: 1s;">
+              <circle cx="130" cy="100" r="15" fill="#9C27B0" opacity="0.8" />
+              <circle cx="150" cy="70" r="10" fill="#9C27B0" opacity="0.6" />
+              <circle cx="170" cy="50" r="5" fill="#9C27B0" opacity="0.4" />
+            </g>
+            <g class="floating" style="animation-delay: 2s;">
+              <circle cx="270" cy="100" r="15" fill="#B2EBF2" opacity="0.8" />
+              <circle cx="250" cy="70" r="10" fill="#B2EBF2" opacity="0.6" />
+              <circle cx="230" cy="50" r="5" fill="#B2EBF2" opacity="0.4" />
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Add this right after the Hero section (before the Chat Modal) -->
+<!-- Mental Health Importance Section -->
+<section class="py-16 px-4 relative z-10 bg-white bg-opacity-90">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Why Mental Health Matters</h2>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-xl shadow-md">
+          <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-3 text-gray-800">Overall Wellbeing</h3>
+          <p class="text-gray-600">Mental health affects how we think, feel, and act. It helps determine how we handle stress, relate to others, and make choices.</p>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl shadow-md">
+          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-3 text-gray-800">Relationships</h3>
+          <p class="text-gray-600">Good mental health strengthens relationships, improves communication, and helps build meaningful connections with others.</p>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl shadow-md">
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-3 text-gray-800">Productivity</h3>
+          <p class="text-gray-600">Mental wellness enhances productivity, creativity, and the ability to cope with challenges in work and daily life.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Mental Exercises Section -->
+  <section class="py-16 px-4 relative z-10" style="background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%);">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Simple Mental Exercises</h2>
+      
+      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div class="bg-white p-6 rounded-xl shadow-md flex">
+          <div class="mr-4">
+            <div class="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+              <span class="text-teal-600 font-bold">1</span>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-3 text-gray-800">Deep Breathing</h3>
+            <p class="text-gray-600">Take 5 deep breaths, inhaling for 4 seconds, holding for 4, and exhaling for 6. This activates your relaxation response.</p>
+          </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl shadow-md flex">
+          <div class="mr-4">
+            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+              <span class="text-purple-600 font-bold">2</span>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-3 text-gray-800">Gratitude Journal</h3>
+            <p class="text-gray-600">Write down 3 things you're grateful for each day. This simple practice can boost positivity and resilience.</p>
+          </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl shadow-md flex">
+          <div class="mr-4">
+            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <span class="text-blue-600 font-bold">3</span>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-3 text-gray-800">Mindful Walking</h3>
+            <p class="text-gray-600">Take a short walk focusing on each step and your surroundings. This grounds you in the present moment.</p>
+          </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl shadow-md flex">
+          <div class="mr-4">
+            <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
+              <span class="text-pink-600 font-bold">4</span>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-3 text-gray-800">Body Scan</h3>
+            <p class="text-gray-600">Slowly scan your body from toes to head, noticing any tension. This promotes body awareness and relaxation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- How Chatbot Helps Section -->
+  <section class="py-16 px-4 relative z-10 bg-white bg-opacity-90">
+    <div class="container mx-auto max-w-4xl">
+      <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">How SereneMind Can Help</h2>
+      
+      <div class="space-y-8">
+        <div class="flex items-start">
+          <div class="bg-teal-100 p-3 rounded-lg mr-4">
+            <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">24/7 Support</h3>
+            <p class="text-gray-600">Our chatbot is available anytime you need to talk, providing immediate support when you're feeling stressed or anxious.</p>
+          </div>
+        </div>
+        
+        <div class="flex items-start">
+          <div class="bg-purple-100 p-3 rounded-lg mr-4">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">Self-Assessment</h3>
+            <p class="text-gray-600">Take our PHQ-9 assessment to understand your mental health status and get personalized recommendations.</p>
+          </div>
+        </div>
+        
+        <div class="flex items-start">
+          <div class="bg-blue-100 p-3 rounded-lg mr-4">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">Resources & Tools</h3>
+            <p class="text-gray-600">Access guided exercises, coping strategies, and mental health resources tailored to your needs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chat Modal (hidden by default) -->
+  <div id="chat-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="frosted-glass m-4 rounded-2xl shadow-lg overflow-hidden flex flex-col" style="backdrop-filter: blur(15px); width: 90%; max-width: 800px; height: 85vh; max-height: 700px;">
+      <!-- Chat Header -->
+      <div class="gradient-header p-4 flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#9C27B0" stroke-width="2" />
+              <path d="M50,30 C60,40 70,45 50,70 C30,45 40,40 50,30" fill="#9C27B0" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium text-white">SereneMind Chat</h3>
+            <p class="text-xs text-white text-opacity-80">Your mental wellness companion</p>
+          </div>
+        </div>
+        <button id="close-chat" class="p-2 rounded-full bg-white bg-opacity-20 text-white hover:bg-opacity-30 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+  
+      <!-- Chat Messages -->
+      <div id="chat-messages-container" class="flex-grow p-4 overflow-y-auto">
+        <!-- Messages will appear here -->
+      </div>
+  
+      <!-- Input Area -->
+      <div class="p-4 border-t border-white border-opacity-20 bg-white bg-opacity-10">
+        <div class="flex items-center mb-3">
+          <input type="text" id="chat-input" class="input-field flex-grow p-3 rounded-l-xl bg-white bg-opacity-90 border-0 shadow-inner" placeholder="Share your thoughts..." />
+          <button id="chat-send-button" class="send-button p-3 rounded-r-xl text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </button>
+        </div>
+        <div class="flex justify-center w-full">
+          <button id="chat-phq-button" class="phq-button flex items-center px-6 py-3 rounded-full text-white shadow-md w-full max-w-xs justify-center">
+            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Take PHQ-9 Assessment
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHQ-9 Assessment Modal -->
+  <div id="phq-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="frosted-glass m-4 max-w-lg w-full rounded-2xl shadow-lg p-6 border border-white border-opacity-30" style="backdrop-filter: blur(15px);">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-medium text-white">PHQ-9 Assessment</h2>
+        <button id="close-phq" class="text-white opacity-70 hover:opacity-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- PHQ-9 Progress Indicator -->
+      <div class="phq-progress mb-6">
+        <div class="phq-step active">1</div>
+        <div class="phq-step">2</div>
+        <div class="phq-step">3</div>
+        <div class="phq-step">4</div>
+        <div class="phq-step">5</div>
+        <div class="phq-step">6</div>
+        <div class="phq-step">7</div>
+        <div class="phq-step">8</div>
+        <div class="phq-step">9</div>
+      </div>
+
+      <div id="phq-questions-container" class="space-y-6 max-h-96 overflow-y-auto">
+        <!-- Questions will be inserted here by JavaScript -->
+      </div>
+
+      <div class="mt-6 flex justify-between">
+        <button id="phq-prev" class="px-6 py-2 rounded-full text-white font-medium bg-white bg-opacity-20 hover:bg-opacity-30 transition hidden">
+          <span class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Previous
+          </span>
+        </button>
+        <button id="phq-next" class="px-6 py-2 rounded-full text-white font-medium shadow-md" style="background: linear-gradient(135deg, #80DEEA, #26C6DA);">
+          <span class="flex items-center">
+            Next
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </span>
+        </button>
+        <button id="submit-phq" class="px-6 py-2 rounded-full text-white font-medium shadow-md hidden" style="background: linear-gradient(135deg, #69F0AE, #00E676);">
+          <span class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Submit
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHQ-9 Results Modal -->
+  <div id="phq-results-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="frosted-glass m-4 max-w-lg w-full rounded-2xl shadow-lg p-6 border border-white border-opacity-30" style="backdrop-filter: blur(15px);">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-medium text-white">Your PHQ-9 Results</h2>
+        <button id="close-phq-results" class="text-white opacity-70 hover:opacity-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="bg-white bg-opacity-90 rounded-lg p-6 shadow-sm">
+        <div class="text-center mb-6">
+          <div class="w-24 h-24 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-4">
+            <span id="phq-score" class="text-3xl font-bold text-teal-600">0</span>
+          </div>
+          <h3 id="phq-severity" class="text-xl font-medium text-gray-800">Minimal Depression</h3>
+        </div>
+
+        <div class="mb-6">
+          <div class="flex justify-between text-sm text-gray-600 mb-2">
+            <span>Minimal</span>
+            <span>Mild</span>
+            <span>Moderate</span>
+            <span>Severe</span>
+          </div>
+          <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div id="phq-severity-bar" class="h-full bg-gradient-to-r from-teal-400 to-blue-400" style="width: 10%;"></div>
+          </div>
+        </div>
+
+        <div id="phq-recommendation" class="text-gray-700">
+          <p class="mb-4">Based on your responses, you're experiencing minimal symptoms of depression. It's always good to check in with yourself.</p>
+          <p>Remember that this is not a clinical diagnosis. If you have concerns about your mental health, please consult with a healthcare professional.</p>
+        </div>
+
+        <div class="mt-6 flex justify-center">
+          <button id="continue-chat" class="px-6 py-2 rounded-full text-white font-medium shadow-md" style="background: linear-gradient(135deg, #80DEEA, #26C6DA);">
+            Continue Chatting
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div id="loading-indicator" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden">
+    <div class="lotus-loader">
+      <div class="lotus-petal" style="transform: rotate(0deg) translate(20px, 0)"></div>
+      <div class="lotus-petal" style="transform: rotate(45deg) translate(20px, 0)"></div>
+      <div class="lotus-petal" style="transform: rotate(90deg) translate(20px, 0)"></div>
+      <div class="lotus-petal" style="transform: rotate(135deg) translate(20px, 0)"></div>
+      <div class="lotus-petal" style="transform: rotate(180deg) translate(20px, 0)"></div>
+      <div class="lotus-petal" style="transform: rotate(225deg) translate(20px, 0)"></div>
+      <div class="lotus-petal" style="transform: rotate(270deg) translate(20px, 0)"></div>
+      <div class="lotus-petal" style="transform: rotate(315deg) translate(20px, 0)"></div>
+    </div>
+  </div>
+
+  <script src="static/script.js"></script>
+</body>
+</html>
